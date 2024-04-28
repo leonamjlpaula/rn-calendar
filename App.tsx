@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { Text } from "./src/components/text";
+import { Calendar } from "./src/components/Calendar/calendar";
 import {
   useFonts,
   Poppins_500Medium,
@@ -18,8 +19,9 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Calendar</Text>
       <StatusBar style="auto" />
+      <Text style={styles.title}>Calendar</Text>
+      <Calendar />
     </View>
   );
 }
@@ -28,8 +30,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
-    alignItems: "center",
     justifyContent: "center",
+    padding: 24,
   },
   title: {
     fontFamily: "Poppins_600SemiBold",
