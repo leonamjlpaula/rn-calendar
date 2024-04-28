@@ -26,6 +26,7 @@ export const Calendar = () => {
   }, [yearMonthInCalendar]);
 
   const columnGapStyle = useMemo(() => {
+    //Calculate gap based available width
     const gap = (componentWidth - 2 - 11 - 13 - 6 * 27) / 5;
     return {
       columnGap: gap,
