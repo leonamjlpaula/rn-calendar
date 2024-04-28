@@ -6,9 +6,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Text = ({ children, ...rest }: TextProps) => {
+export const Text = ({ children, style, ...rest }: TextProps) => {
   return (
-    <RNText style={styles.default} {...rest}>
+    <RNText style={[styles.default, style]} {...rest}>
       {children}
     </RNText>
   );
