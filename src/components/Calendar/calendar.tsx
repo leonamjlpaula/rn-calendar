@@ -2,6 +2,8 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "../text";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { generateCalendar } from "../../utils/generators";
+import { addMonths, subMonths, format, isSameMonth } from "date-fns";
 
 const styles = StyleSheet.create({
   container: {
@@ -54,46 +56,32 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     fontSize: 15,
   },
+  dayTextNotInMonth: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 15,
+    color: "rgba(255, 255, 255, 0.2)",
+  },
 });
-
-const days = [
-  27,
-  28,
-  ...Array.from({ length: 31 }, (_, index) => index + 1),
-  1,
-  2,
-  3,
-];
 
 export const Calendar = () => {
   const [componentWidth, setComponentWidth] = useState(0);
 
   const [daysInCalendar, setDaysInCalendar] = useState<Date[]>([]);
-  const [monthInCalendar, setMonthInCalendar] = useState<number>(
-    new Date().getMonth()
+  const [yearMonthInCalendar, setYearMonthInCalendar] = useState<Date>(
+    new Date()
   );
-  const [yearInCalendar, setYearInCalendar] = useState<number>(
-    new Date().getFullYear()
-  );
+
+  useEffect(() => {
+    setDaysInCalendar(generateCalendar(yearMonthInCalendar));
+  }, [yearMonthInCalendar]);
 
   const handleDecrementMonth = useCallback(() => {
-    if (monthInCalendar === 1) {
-      if (yearInCalendar === 1) return;
-      setYearInCalendar((prev) => prev - 1);
-      setMonthInCalendar(11);
-    } else {
-      setMonthInCalendar((prev) => prev - 1);
-    }
-  }, [monthInCalendar, yearInCalendar]);
+    setYearMonthInCalendar(subMonths(yearMonthInCalendar, 1));
+  }, [yearMonthInCalendar]);
 
   const handleIncrementMonth = useCallback(() => {
-    if (monthInCalendar === 11) {
-      setYearInCalendar((prev) => prev + 1);
-      setMonthInCalendar(1);
-    } else {
-      setMonthInCalendar((prev) => prev + 1);
-    }
-  }, [monthInCalendar]);
+    setYearMonthInCalendar(addMonths(yearMonthInCalendar, 1));
+  }, [yearMonthInCalendar]);
 
   const columnGapStyle = useMemo(() => {
     const gap = (componentWidth - 2 - 11 - 13 - 6 * 27) / 5;
@@ -108,14 +96,25 @@ export const Calendar = () => {
       onLayout={(e) => setComponentWidth(e.nativeEvent.layout.width)}
     >
       <View style={styles.titleContainer}>
-        <Text style={styles.month}>{monthInCalendar}</Text>
-        <Text style={styles.year}>{yearInCalendar}</Text>
+        <Text style={styles.month}>{format(yearMonthInCalendar, "MMMM")}</Text>
+        <Text style={styles.year}>{format(yearMonthInCalendar, "yyyy")}</Text>
       </View>
       <View style={[styles.daysContainer, columnGapStyle]}>
-        {days.map((day) => (
-          <TouchableOpacity>
+        {daysInCalendar.map((day) => (
+          <TouchableOpacity
+            key={day.toDateString()}
+            disabled={!isSameMonth(day, yearMonthInCalendar)}
+          >
             <View style={[styles.dayStyle]}>
-              <Text style={styles.dayText}>{day}</Text>
+              <Text
+                style={
+                  isSameMonth(day, yearMonthInCalendar)
+                    ? styles.dayText
+                    : styles.dayTextNotInMonth
+                }
+              >
+                {format(day, "d")}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}
