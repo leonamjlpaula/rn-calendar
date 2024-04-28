@@ -3,7 +3,7 @@ import { Text } from "../text";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { generateCalendar } from "../../utils/generators";
-import { addMonths, subMonths, format, isSameMonth } from "date-fns";
+import { addMonths, subMonths, format, isSameMonth, isEqual } from "date-fns";
 
 const styles = StyleSheet.create({
   container: {
@@ -46,9 +46,16 @@ const styles = StyleSheet.create({
     paddingRight: 13,
   },
   dayStyle: {
-    // backgroundColor: "blue",
     height: 27,
     width: 27,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  selectedDayStyle: {
+    backgroundColor: "#00A19B",
+    height: 27,
+    width: 27,
+    borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -65,11 +72,11 @@ const styles = StyleSheet.create({
 
 export const Calendar = () => {
   const [componentWidth, setComponentWidth] = useState(0);
-
   const [daysInCalendar, setDaysInCalendar] = useState<Date[]>([]);
   const [yearMonthInCalendar, setYearMonthInCalendar] = useState<Date>(
     new Date()
   );
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   useEffect(() => {
     setDaysInCalendar(generateCalendar(yearMonthInCalendar));
@@ -104,8 +111,15 @@ export const Calendar = () => {
           <TouchableOpacity
             key={day.toDateString()}
             disabled={!isSameMonth(day, yearMonthInCalendar)}
+            onPress={() => setSelectedDate(day)}
           >
-            <View style={[styles.dayStyle]}>
+            <View
+              style={[
+                isEqual(day, selectedDate)
+                  ? styles.selectedDayStyle
+                  : styles.dayStyle,
+              ]}
+            >
               <Text
                 style={
                   isSameMonth(day, yearMonthInCalendar)
