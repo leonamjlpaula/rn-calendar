@@ -1,7 +1,7 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "../text";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const styles = StyleSheet.create({
   container: {
@@ -67,9 +67,33 @@ const days = [
 
 export const Calendar = () => {
   const [componentWidth, setComponentWidth] = useState(0);
-  const handleDecrementMonth = useCallback(() => {}, []);
 
-  const handleIncrementMonth = useCallback(() => {}, []);
+  const [daysInCalendar, setDaysInCalendar] = useState<Date[]>([]);
+  const [monthInCalendar, setMonthInCalendar] = useState<number>(
+    new Date().getMonth()
+  );
+  const [yearInCalendar, setYearInCalendar] = useState<number>(
+    new Date().getFullYear()
+  );
+
+  const handleDecrementMonth = useCallback(() => {
+    if (monthInCalendar === 1) {
+      if (yearInCalendar === 1) return;
+      setYearInCalendar((prev) => prev - 1);
+      setMonthInCalendar(11);
+    } else {
+      setMonthInCalendar((prev) => prev - 1);
+    }
+  }, [monthInCalendar, yearInCalendar]);
+
+  const handleIncrementMonth = useCallback(() => {
+    if (monthInCalendar === 11) {
+      setYearInCalendar((prev) => prev + 1);
+      setMonthInCalendar(1);
+    } else {
+      setMonthInCalendar((prev) => prev + 1);
+    }
+  }, [monthInCalendar]);
 
   const columnGapStyle = useMemo(() => {
     const gap = (componentWidth - 2 - 11 - 13 - 6 * 27) / 5;
@@ -84,14 +108,16 @@ export const Calendar = () => {
       onLayout={(e) => setComponentWidth(e.nativeEvent.layout.width)}
     >
       <View style={styles.titleContainer}>
-        <Text style={styles.month}>March</Text>
-        <Text style={styles.year}>2023</Text>
+        <Text style={styles.month}>{monthInCalendar}</Text>
+        <Text style={styles.year}>{yearInCalendar}</Text>
       </View>
       <View style={[styles.daysContainer, columnGapStyle]}>
         {days.map((day) => (
-          <View style={styles.dayStyle}>
-            <Text style={styles.dayText}>{day}</Text>
-          </View>
+          <TouchableOpacity>
+            <View style={[styles.dayStyle]}>
+              <Text style={styles.dayText}>{day}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </View>
       <View style={styles.monthControlsContainer}>
