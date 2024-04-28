@@ -3,7 +3,7 @@ import { Text } from "../text";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { generateCalendar } from "../../utils/generators";
-import { addMonths, subMonths, format, isSameMonth, isEqual } from "date-fns";
+import { addMonths, subMonths, format, isSameMonth, isSameDay } from "date-fns";
 
 interface CalendarProps {
   onDateSelected: (date: Date) => void;
@@ -63,7 +63,7 @@ export const Calendar = ({ onDateSelected }: CalendarProps) => {
           >
             <View
               style={[
-                isEqual(day, selectedDate)
+                isSameDay(day, selectedDate)
                   ? styles.selectedDayStyle
                   : styles.dayStyle,
               ]}
