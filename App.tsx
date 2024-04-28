@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     justifyContent: "center",
     padding: 24,
+    gap: 16,
   },
   title: {
     fontFamily: "Poppins_600SemiBold",
