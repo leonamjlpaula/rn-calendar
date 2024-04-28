@@ -7,8 +7,12 @@ import {
   Poppins_500Medium,
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
+import { useState } from "react";
+import { format } from "date-fns";
 
 export default function App() {
+  const [date, setDate] = useState(new Date());
+
   let [fontsLoaded, fontError] = useFonts({
     Poppins_500Medium,
     Poppins_600SemiBold,
@@ -21,7 +25,8 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.title}>Calendar</Text>
-      <Calendar />
+      <Calendar onDateSelected={(date) => setDate(date)} />
+      <Text style={styles.title}>{format(date, "MMMM, dd, yyyy")}</Text>
     </View>
   );
 }

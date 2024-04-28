@@ -5,7 +5,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { generateCalendar } from "../../utils/generators";
 import { addMonths, subMonths, format, isSameMonth, isEqual } from "date-fns";
 
-export const Calendar = () => {
+interface CalendarProps {
+  onDateSelected: (date: Date) => void;
+}
+
+export const Calendar = ({ onDateSelected }: CalendarProps) => {
   const [componentWidth, setComponentWidth] = useState(0);
   const [daysInCalendar, setDaysInCalendar] = useState<Date[]>([]);
   const [yearMonthInCalendar, setYearMonthInCalendar] = useState<Date>(
@@ -33,6 +37,14 @@ export const Calendar = () => {
     };
   }, [componentWidth]);
 
+  const handleSelectedDate = useCallback(
+    (date: Date) => {
+      onDateSelected(date);
+      setSelectedDate(date);
+    },
+    [onDateSelected]
+  );
+
   return (
     <View
       style={styles.container}
@@ -47,7 +59,7 @@ export const Calendar = () => {
           <TouchableOpacity
             key={day.toDateString()}
             disabled={!isSameMonth(day, yearMonthInCalendar)}
-            onPress={() => setSelectedDate(day)}
+            onPress={() => handleSelectedDate(day)}
           >
             <View
               style={[
